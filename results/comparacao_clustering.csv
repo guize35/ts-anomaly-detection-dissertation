@@ -1,5 +1,0 @@
-,Clusters,Silhouette ↑,Calinski-Harabasz ↑,Davies-Bouldin ↓
-KMeans,10.0,0.213,15.1,1.054
-Agglomerative,10.0,0.215,14.7,1.086
-GMM,10.0,0.203,14.7,1.105
-DBSCAN,3.0,0.044,10.9,1.335
