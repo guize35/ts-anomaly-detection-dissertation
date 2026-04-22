@@ -1,0 +1,4 @@
+,Silhouette ↑,Calinski ↑,Davies ↓
+KMeans,0.387,50.0,1.016
+Agglomerative,0.414,47.6,0.982
+GMM,0.488,31.3,0.833
