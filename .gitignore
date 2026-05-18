@@ -4,4 +4,5 @@ PM2025-TSAnomalyDetection/
 __pycache__/
 .ipynb_checkpoints/
 data_processed/
-notebooks/anomaly_detection_timeseries.ipynb
+notebooks/baze_loader.py
+notebooks/realtime_anomaly_detection.py
