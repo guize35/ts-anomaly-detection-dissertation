@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 import numpy as np
 import joblib
@@ -5,14 +6,20 @@ import json
 from pathlib import Path
 from sklearn.decomposition import PCA
  
-base_dir         = Path("../results")
-features_dir     = base_dir / "features"
-clustering_dir   = base_dir / "clustering"
-models_dir       = base_dir / "models"
-output_html      = base_dir / "interactive_pca_clusters.html"
+# Permite importar módulos internos de src/
+SRC_DIR = Path(__file__).resolve().parents[1]
+if str(SRC_DIR) not in sys.path:
+    sys.path.append(str(SRC_DIR))
+
+from config.paths import (
+    RESULTS_FEATURES_DIR,
+    RESULTS_CLUSTERING_DIR,
+    RESULTS_MODELS_DIR,
+    INTERACTIVE_PCA_HTML,
+)
  
-features = pd.read_csv(features_dir / "features_setA.csv", index_col=0)
-clusters = pd.read_csv(clustering_dir / "clusters_cpe.csv", index_col=0)
+features = pd.read_csv(RESULTS_FEATURES_DIR / "features_setA.csv", index_col=0)
+clusters = pd.read_csv(RESULTS_CLUSTERING_DIR / "clusters_cpe.csv", index_col=0)
  
 df = features.join(clusters[["cluster"]], how="inner")
 df_clean = df[df["cluster"] != "outlier"].copy()
@@ -20,7 +27,8 @@ df_clean = df[df["cluster"] != "outlier"].copy()
 feat_cols = [c for c in df_clean.columns if c != "cluster"]
 X         = df_clean[feat_cols].values
  
-pca_path = models_dir / "pca.pkl"
+pca_path = RESULTS_MODELS_DIR / "pca.pkl"
+
 if pca_path.exists():
     pca    = joblib.load(pca_path)
     coords = pca.transform(X)
@@ -484,10 +492,12 @@ html_out = html_template \
     .replace("PC1_VAR",            str(round(pc1_var, 1))) \
     .replace("PC2_VAR",            str(round(pc2_var, 1)))
  
-with open(output_html, "w", encoding="utf-8") as f:
+INTERACTIVE_PCA_HTML.parent.mkdir(parents=True, exist_ok=True)
+
+with open(INTERACTIVE_PCA_HTML, "w", encoding="utf-8") as f:
     f.write(html_out)
  
-print(f"\n    Ficheiro gerado: {output_html.resolve()}")
+print(f"\n    Ficheiro gerado: {INTERACTIVE_PCA_HTML.resolve()}")
 print(f"      Abre no browser (Chrome/Firefox) — funciona offline, sem servidor.")
 print(f"\n    Funcionalidades:")
 print(f"      • Hover sobre qualquer ponto → nome do CPE")

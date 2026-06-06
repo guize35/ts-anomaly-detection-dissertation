@@ -81,26 +81,28 @@ import holidays
 import numpy as np
 import pandas as pd
 
+# Permite importar módulos internos de src/
+SRC_DIR = Path(__file__).resolve().parents[1]
+if str(SRC_DIR) not in sys.path:
+    sys.path.append(str(SRC_DIR))
+
+from config.paths import (
+    RESULTS_DIR,
+    CLUSTERING_DIR,
+    REALTIME_DIR,
+    ALERTS_DIR,
+    PLOTS_DIR,
+    LOGS_DIR,
+    PREDICTIONS_DIR,
+    ANALYSIS_DIR,
+    CLUSTERS_PATH,
+    ZIP_FALLBACK_PATH,
+)
+
+from data.baze_loader import carregar_ontem, CPES_CONFIG
+
 warnings.filterwarnings("ignore")
 
-# ═════════════════════════════════════════════════════════════════════════
-# CONFIGURAÇÃO
-# ═════════════════════════════════════════════════════════════════════════
-
-SCRIPT_DIR        = Path(__file__).resolve().parent
-RESULTS_DIR       = SCRIPT_DIR.parent / "results"
-CLUSTERING_DIR    = RESULTS_DIR / "clustering"
-REALTIME_DIR      = RESULTS_DIR / "realtime"
-ALERTS_DIR        = REALTIME_DIR / "alerts"
-PLOTS_DIR         = REALTIME_DIR / "plots"
-LOGS_DIR          = REALTIME_DIR / "logs"
-# Pastas partilhadas com o notebook 'analise_tempo_real' (mesmos ficheiros)
-PREDICTIONS_DIR   = REALTIME_DIR / "predictions"
-ANALYSIS_DIR      = REALTIME_DIR / "analysis"
-
-CLUSTERS_PATH     = CLUSTERING_DIR / "clusters_cpe.csv"
-ZIP_FALLBACK_PATH = SCRIPT_DIR.parent / "PM2025-TSAnomalyDetection" / \
-                    "example-timeseries" / "consumo15m_11_2025.csv.zip"
 
 # ── Parâmetros de deteção (idênticos ao notebook validado) ──────────────────
 THRESHOLD_POR_TIPO = {
@@ -212,19 +214,6 @@ def configurar_logging(quiet: bool = False) -> logging.Logger:
 
 def carregar_dados_baze(logger: logging.Logger) -> pd.DataFrame:
     """Carrega dados via API BaZe (1 valor por CPE por dia)."""
-    try:
-        sys.path.insert(0, str(SCRIPT_DIR))
-        from baze_loader import carregar_ontem
-        from baze_loader import CPES_CONFIG
-    except ImportError:
-        # Fallback: alguns setups têm CPES_CONFIG dentro do baze_loader
-        try:
-            from baze_loader import carregar_ontem, CPES_CONFIG
-        except ImportError as e:
-            logger.error(f"{Cor.VERMELHO}baze_loader / cpes_config não "
-                         f"encontrados ({e}).{Cor.RESET}")
-            logger.error("       Verifica que ambos estão na pasta do script.")
-            sys.exit(2)
 
     logger.info(f"{Cor.CIANO}→ A pedir dados ao BaZe "
                 f"({len(CPES_CONFIG)} CPEs)...{Cor.RESET}")

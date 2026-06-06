@@ -2,9 +2,10 @@ import requests
 import pandas as pd
 import numpy as np
 import json
-from pathlib import Path
 from datetime import date, timedelta
 import time
+
+from config.paths import BAZE_CACHE_DIR
 
  
 CPES_CONFIG = [
@@ -295,7 +296,7 @@ CPES_CONFIG = [
 BASE_URL = "http://baze2.cm-maia.pt/D4CMMaia/api/sumac.php"
  
 # Cache local para não pedir a mesma coisa duas vezes
-CACHE_DIR = Path("../results/baze_cache")
+CACHE_DIR = BAZE_CACHE_DIR
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
  
  
